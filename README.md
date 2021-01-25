@@ -17,4 +17,4 @@ loop = platform.get_loop()
 bcc = platform.get_bcc()
 app: GraiaMiraiApplication = platform.get_app()
 ```
-实例插件 `MessagePrinter` 可在 `plugins/MessagePrinter` 目录下查看
+示例插件 `MessagePrinter` 可在 `plugins/MessagePrinter` 目录下查看
