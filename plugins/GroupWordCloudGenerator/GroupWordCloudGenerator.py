@@ -23,9 +23,18 @@ bcc = platform.get_bcc()
 app: GraiaMiraiApplication = platform.get_app()
 seg = pkuseg.pkuseg()
 
+BASE_PATH = "./plugins/GroupWordCloudGenerator/"
+
 
 @bcc.receiver(GroupMessage)
 async def group_wordcloud_generator(message: MessageChain, group: Group, member: Member):
+    """
+    群/个人词云生成器
+    使用方法：
+        群内发送 我的月内总结/我的年内总结/本群月内总结/本群年内总结 即可
+    插件来源：
+        SAGIRI-kawaii
+    """
     message_text = message.asDisplay()
     member_id = member.id
     group_id = group.id
@@ -95,10 +104,10 @@ async def write_chat_record(seg, group_id: int, member_id: int, content: str) ->
 
 
 async def draw_word_cloud(read_name):
-    mask = np.array(IMG.open('./plugins/GroupWordCloudGenerator/back.jpg'))
+    mask = np.array(IMG.open(f'{BASE_PATH}back.jpg'))
     print(mask.shape)
     wc = WordCloud(
-        font_path='./plugins/GroupWordCloudGenerator/STKAITI.TTF',
+        font_path=f'{BASE_PATH}STKAITI.TTF',
         background_color='white',
         # max_words=500,
         max_font_size=100,
@@ -125,7 +134,7 @@ async def draw_word_cloud(read_name):
     # plt.imshow(wc)
     plt.axis("off")
     # plt.show()
-    wc.to_file('./plugins/GroupWordCloudGenerator/tempWordCloud.png')
+    wc.to_file(f'{BASE_PATH}tempWordCloud.png')
 
 
 async def get_review(group_id: int, member_id: int, review_type: str, target: str) -> MessageChain:
@@ -171,5 +180,5 @@ async def get_review(group_id: int, member_id: int, review_type: str, target: st
             Plain(text="\n---------至---------\n"),
             Plain(text=f"{year}-{month}-{day} {hour}:{minute}:{second}"),
             Plain(text=f"\n自有记录以来，{'你' if target == 'member' else '本群'}一共发了{times}条消息\n下面是{'你的' if target == 'member' else '本群的'}{tag}词云:\n"),
-            Image.fromLocalFile("./plugins/GroupWordCloudGenerator/tempWordCloud.png")
+            Image.fromLocalFile(f"{BASE_PATH}tempWordCloud.png")
         ])
