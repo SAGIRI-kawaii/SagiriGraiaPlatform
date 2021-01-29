@@ -9,8 +9,6 @@ from graia.application.message.elements.internal import Image
 from graia.application.event.messages import GroupMessage
 from graia.application import GraiaMiraiApplication
 from graia.application.group import Group
-from graia.application.message.parser.kanata import Kanata
-from graia.application.message.parser.signature import RegexMatch
 
 from sagiri_core.core import SagiriGraiaPlatformCore
 
