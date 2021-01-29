@@ -95,7 +95,7 @@ class SagiriGraiaPlatformCore:
                         self.__plugins.append(module)
                         self.__plugins_set.add(d)
                     except Exception as e:
-                        print(f"loading error: {e}")
+                        print(f"\033[1;31mloading error: {e}\033[0m")
         print("\nloading plugins finished")
 
     def get_config(self):
