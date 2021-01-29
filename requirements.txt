@@ -1,0 +1,8 @@
+Pillow
+graia-application-mirai
+aiohttp
+numpy
+matplotlib
+pkuseg
+wordcloud
+python-dateutil
