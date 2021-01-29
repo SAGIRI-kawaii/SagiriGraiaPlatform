@@ -31,13 +31,13 @@ async def group_wordcloud_generator(message: MessageChain, group: Group, member:
     group_id = group.id
     await write_chat_record(seg, group_id, member_id, message_text)
     if message_text == "我的月内总结":
-        await app.sendGroupMessage(group, await get_personal_review(group_id, member_id, "month"))
+        await app.sendGroupMessage(group, await get_review(group_id, member_id, "month", "member"))
     elif message_text == "我的年内总结":
-        await app.sendGroupMessage(group, await get_personal_review(group_id, member_id, "year"))
+        await app.sendGroupMessage(group, await get_review(group_id, member_id, "year", "member"))
     elif message_text == "本群月内总结":
-        await app.sendGroupMessage(group, await get_group_review(group_id, "month"))
+        await app.sendGroupMessage(group, await get_review(group_id, member_id, "month", "group"))
     elif message_text == "本群年内总结":
-        await app.sendGroupMessage(group, await get_group_review(group_id, "year"))
+        await app.sendGroupMessage(group, await get_review(group_id, member_id, "year", "group"))
 
 
 async def count_words(sp, n):
@@ -128,7 +128,7 @@ async def draw_word_cloud(read_name):
     wc.to_file('./plugins/GroupWordCloudGenerator/tempWordCloud.png')
 
 
-async def get_personal_review(group_id: int, member_id: int, review_type: str) -> MessageChain:
+async def get_review(group_id: int, member_id: int, review_type: str, target: str) -> MessageChain:
     time = datetime.datetime.now()
     year, month, day, hour, minute, second = time.strftime("%Y %m %d %H %M %S").split(" ")
     if review_type == "year":
@@ -144,8 +144,9 @@ async def get_personal_review(group_id: int, member_id: int, review_type: str) -
 
     sql = f"""SELECT * FROM chatRecord 
                     WHERE 
-                groupId={group_id} AND memberId={member_id} AND time<'{year}-{month}-{day} {hour}:{minute}:{second}'
-                                                AND time>'{yearp}-{monthp}-{dayp} {hourp}:{minutep}:{secondp}'"""
+                groupId={group_id} {f'AND memberId={member_id}' if target == 'member' else ''} 
+                AND time<'{year}-{month}-{day} {hour}:{minute}:{second}'
+                AND time>'{yearp}-{monthp}-{dayp} {hourp}:{minutep}:{secondp}'"""
     # print(sql)
     res = await execute_sql(sql)
     texts = []
@@ -159,8 +160,9 @@ async def get_personal_review(group_id: int, member_id: int, review_type: str) -
     await draw_word_cloud(top_n)
     sql = f"""SELECT count(*) FROM chatRecord 
                     WHERE 
-                groupId={group_id} AND memberId={member_id} AND time<'{year}-{month}-{day} {hour}:{minute}:{second}'
-                                                AND time>'{yearp}-{monthp}-{dayp} {hourp}:{minutep}:{secondp}'"""
+                groupId={group_id} {f'AND memberId={member_id}' if target == 'member' else ''}  
+                AND time<'{year}-{month}-{day} {hour}:{minute}:{second}'
+                AND time>'{yearp}-{monthp}-{dayp} {hourp}:{minutep}:{secondp}'"""
     res = await execute_sql(sql)
     times = res[0][0]
     return MessageChain.create([
@@ -168,51 +170,6 @@ async def get_personal_review(group_id: int, member_id: int, review_type: str) -
             Plain(text=f"{yearp}-{monthp}-{dayp} {hourp}:{minutep}:{secondp}"),
             Plain(text="\n---------至---------\n"),
             Plain(text=f"{year}-{month}-{day} {hour}:{minute}:{second}"),
-            Plain(text=f"\n自有记录以来，你一共发了{times}条消息\n下面是你的{tag}个人词云:\n"),
-            Image.fromLocalFile("./plugins/GroupWordCloudGenerator/tempWordCloud.png")
-        ])
-
-
-async def get_group_review(group_id: int, review_type: str) -> MessageChain:
-    time = datetime.datetime.now()
-    year, month, day, hour, minute, second = time.strftime("%Y %m %d %H %M %S").split(" ")
-    if review_type == "year":
-        yearp, monthp, dayp, hourp, minutep, secondp = (time - relativedelta(years=1)).strftime("%Y %m %d %H %M %S").split(" ")
-        tag = "年内"
-    elif review_type == "month":
-        yearp, monthp, dayp, hourp, minutep, secondp = (time - relativedelta(months=1)).strftime("%Y %m %d %H %M %S").split(" ")
-        tag = "月内"
-    else:
-        return MessageChain.create([
-                Plain(text="Error: review_type invalid!")
-            ])
-    sql = f"""SELECT * FROM chatRecord 
-                        WHERE 
-                    groupId={group_id} AND time<'{year}-{month}-{day} {hour}:{minute}:{second}'
-                                                    AND time>'{yearp}-{monthp}-{dayp} {hourp}:{minutep}:{secondp}'"""
-    # print(sql)
-    res = await execute_sql(sql)
-    texts = []
-    for i in res:
-        if i[4]:
-            texts += i[4].split(",")
-        else:
-            if i[3]:
-                texts.append(i[3])
-    print(texts)
-    top_n = await count_words(texts, 20000)
-    await draw_word_cloud(top_n)
-    sql = f"""SELECT count(*) FROM chatRecord 
-                        WHERE 
-                    groupId={group_id} AND time<'{year}-{month}-{day} {hour}:{minute}:{second}'
-                                                    AND time>'{yearp}-{monthp}-{dayp} {hourp}:{minutep}:{secondp}'"""
-    res = await execute_sql(sql)
-    times = res[0][0]
-    return MessageChain.create([
-            Plain(text="记录时间：\n"),
-            Plain(text=f"{yearp}-{monthp}-{dayp} {hourp}:{minutep}:{secondp}"),
-            Plain(text="\n---------至---------\n"),
-            Plain(text=f"{year}-{month}-{day} {hour}:{minute}:{second}"),
-            Plain(text=f"\n自有记录以来，本群一共发了{times}条消息\n下面是本群的{tag}词云:\n"),
+            Plain(text=f"\n自有记录以来，{'你' if target == 'member' else '本群'}一共发了{times}条消息\n下面是{'你的' if target == 'member' else '本群的'}{tag}词云:\n"),
             Image.fromLocalFile("./plugins/GroupWordCloudGenerator/tempWordCloud.png")
         ])
