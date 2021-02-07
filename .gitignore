@@ -7,4 +7,4 @@
 .idea/sagiri_graia_platform.iml
 .idea/vcs.xml
 __pycache__/
-config.json
+./config.json

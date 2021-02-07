@@ -20,6 +20,7 @@ class SagiriGraiaPlatformCore:
     __config: dict = None
     __plugins_set: set = set()
     __plugins: list = []
+    __launched: bool = False
     plugins_path: str = "./plugins/"
     plugins_folder_name: str = "plugins"
     necessary_parameters = ["miraiHost", "authKey", "BotQQ"]
@@ -114,3 +115,9 @@ class SagiriGraiaPlatformCore:
     def get_plugins(self):
         return self.__plugins
 
+    def launch(self):
+        if not self.__launched:
+            self.__app.launch_blocking()
+            self.__launched = True
+        else:
+            raise GraiaMiraiApplicationAlreadyLaunched()

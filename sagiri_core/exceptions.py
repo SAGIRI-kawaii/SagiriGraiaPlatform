@@ -6,3 +6,8 @@ class SagiriGraiaPlatformCoreNotInitialized(Exception):
 class SagiriGraiaPlatformCoreAlreadyInitialized(Exception):
     """平台核心模块重复初始化"""
     pass
+
+
+class GraiaMiraiApplicationAlreadyLaunched(Exception):
+    """GraiaMiraiApplication重复启动"""
+    pass

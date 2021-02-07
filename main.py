@@ -10,4 +10,4 @@ app = platform.get_app()
 for plugin in platform.get_plugins():
     print(plugin)
 
-app.launch_blocking()
+platform.launch()
