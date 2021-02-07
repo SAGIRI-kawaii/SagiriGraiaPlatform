@@ -12,6 +12,12 @@ from graia.application.group import Group
 
 from sagiri_core.core import SagiriGraiaPlatformCore
 
+# 插件信息
+__name__ = "SetuSaver"
+__description__ = "根据pixiv pid存储图片"
+__author__ = "SAGIRI-kawaii"
+__usage__ = """添加图片：在群中发送 /添加涩图 pid即可\n删除图片：在群中发送 /删除涩图 pid即可"""
+
 
 platform = SagiriGraiaPlatformCore.get_platform_instance()
 loop = platform.get_loop()

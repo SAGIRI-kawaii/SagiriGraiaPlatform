@@ -7,13 +7,16 @@ from graia.application.event.messages import GroupMessage
 from graia.application.event.messages import FriendMessage
 from graia.application.event.messages import TempMessage
 
+# 插件信息
+__name__ = "MessagePrinter"
+__description__ = "打印收到的消息"
+__author__ = "SAGIRI-kawaii"
+__usage__ = ""
+
 
 platform = SagiriGraiaPlatformCore.get_platform_instance()
 bcc = platform.get_bcc()
 app: GraiaMiraiApplication = platform.get_app()
-
-__name__ = "test"
-__usage__ = "测试用"
 
 
 @bcc.receiver(GroupMessage)

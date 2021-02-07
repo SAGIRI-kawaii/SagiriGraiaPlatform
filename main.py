@@ -7,9 +7,7 @@ platform.plugins_load()
 
 app = platform.get_app()
 
-while True:
-    try:
-        app.launch_blocking()
-    except KeyboardInterrupt:
-        break
+for plugin in platform.get_plugins():
+    print(plugin)
 
+app.launch_blocking()

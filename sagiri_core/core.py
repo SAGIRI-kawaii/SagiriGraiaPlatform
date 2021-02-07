@@ -92,7 +92,17 @@ class SagiriGraiaPlatformCore:
                     try:
                         print(f"loading plugin: {d}")
                         module = importlib.import_module(f"{self.plugins_folder_name}.{d}.{d}", d)
-                        self.__plugins.append(module)
+                        name = getattr(module, '__name__', None)
+                        description = getattr(module, '__description__', None)
+                        author = getattr(module, '__author__', None)
+                        usage = getattr(module, '__usage__', None)
+                        module_info = {
+                            "name": name,
+                            "description": description,
+                            "author": author,
+                            "usage": usage
+                        }
+                        self.__plugins.append(module_info)
                         self.__plugins_set.add(d)
                     except Exception as e:
                         print(f"\033[1;31mloading error: {e}\033[0m")
@@ -102,4 +112,5 @@ class SagiriGraiaPlatformCore:
         return self.__config
 
     def get_plugins(self):
-        return self.__plugins_set
+        return self.__plugins
+

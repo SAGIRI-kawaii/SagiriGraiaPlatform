@@ -8,6 +8,14 @@ from graia.application.event.messages import Member
 
 from sagiri_core.core import SagiriGraiaPlatformCore
 
+
+# 插件信息
+__name__ = "GithubRepositoriesFinder"
+__description__ = "根据地址寻找仓库并返回详细信息"
+__author__ = "umauc"
+__usage__ = "在群中发送github 用户名/仓库名 获取信息"
+
+
 platform = SagiriGraiaPlatformCore.get_platform_instance()
 loop = platform.get_loop()
 bcc = platform.get_bcc()

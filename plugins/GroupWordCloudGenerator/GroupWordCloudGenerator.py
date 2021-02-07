@@ -17,6 +17,12 @@ from graia.application.group import Group, Member
 from sagiri_core.core import SagiriGraiaPlatformCore
 from .Sqlite3Manager import execute_sql
 
+# 插件信息
+__name__ = "GroupWordCloudGenerator"
+__description__ = "记录聊天记录并生成个人/群组词云"
+__author__ = "SAGIRI-kawaii"
+__usage__ = "在群内发送 我的月内总结/我的年内总结/本群月内总结/本群年内总结 即可"
+
 
 platform = SagiriGraiaPlatformCore.get_platform_instance()
 bcc = platform.get_bcc()

@@ -13,12 +13,19 @@ from graia.application.message.parser.signature import FullMatch
 from graia.application.group import Group
 
 
+# 插件信息
+__name__ = "WeiboHotSearch"
+__description__ = "获取当前微博热搜"
+__author__ = "SAGIRI-kawaii"
+__usage__ = "在群内发送 微博 即可"
+
+
 platform = SagiriGraiaPlatformCore.get_platform_instance()
 bcc = platform.get_bcc()
 app: GraiaMiraiApplication = platform.get_app()
 
 
-@bcc.receiver(GroupMessage, dispatchers=[Kanata([FullMatch('weibo')])])
+@bcc.receiver(GroupMessage, dispatchers=[Kanata([FullMatch('微博')])])
 async def group_message_listener(app: GraiaMiraiApplication, group: Group):
     await app.sendGroupMessage(
         group,
